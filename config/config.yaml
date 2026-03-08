@@ -1,0 +1,35 @@
+app:
+  name: secure-llm-deployment
+  version: "1.0.0"
+  debug: false
+  host: "0.0.0.0"
+  port: 8000
+
+security:
+  jwt_secret: "${JWT_SECRET}"
+  jwt_expiry_hours: 24
+  rate_limit_per_minute: 60
+  max_input_length: 4096
+  enable_pii_filter: true
+  enable_prompt_guard: true
+
+models:
+  default_model: "small"
+  small_model:
+    name: "gpt-3.5-turbo"
+    max_tokens: 1024
+    cost_per_1k_tokens: 0.002
+  large_model:
+    name: "gpt-4"
+    max_tokens: 4096
+    cost_per_1k_tokens: 0.06
+
+cache:
+  enabled: true
+  ttl_seconds: 3600
+  max_size: 10000
+  similarity_threshold: 0.95
+
+monitoring:
+  prometheus_enabled: true
+  log_level: "INFO"

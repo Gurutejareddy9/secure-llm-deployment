@@ -1,0 +1,42 @@
+security:
+  # Input validation
+  max_input_length: 4096
+  allowed_characters: "printable"   # "printable" | "alphanumeric"
+  strip_html: true
+  strip_sql_patterns: true
+
+  # Prompt injection
+  prompt_injection:
+    enabled: true
+    threshold: 0.5   # Confidence above which queries are blocked
+    log_all_checks: true
+
+  # PII filtering
+  pii:
+    enabled: true
+    redaction_mode: "replace"   # "replace" | "mask" | "remove"
+    enabled_types:
+      - EMAIL
+      - PHONE
+      - SSN
+      - CREDIT_CARD
+      - IP_ADDRESS
+      - DATE_OF_BIRTH
+
+  # Output safety
+  output_filter:
+    enabled: true
+    block_harmful_content: true
+    redact_pii_in_output: true
+
+  # Rate limiting
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 60
+    burst_size: 20
+
+  # Authentication
+  auth:
+    algorithm: "HS256"
+    token_expiry_hours: 24
+    require_auth_on_all_routes: true
