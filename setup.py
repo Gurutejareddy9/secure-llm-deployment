@@ -14,7 +14,7 @@ setup(
         "fastapi>=0.104.0",
         "uvicorn[standard]>=0.24.0",
         "python-jose[cryptography]>=3.3.0",
-        "passlib[bcrypt]>=1.7.4",
+        "bcrypt>=4.0.1",
         "slowapi>=0.1.9",
         "openai>=1.3.0",
         "redis>=5.0.0",
