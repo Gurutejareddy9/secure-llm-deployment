@@ -4,8 +4,8 @@ import os
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -14,16 +14,22 @@ SECRET_KEY: str = os.getenv("JWT_SECRET", "change-me-in-production")
 ALGORITHM: str = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS: int = int(os.getenv("JWT_EXPIRY_HOURS", "24"))
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# bcrypt enforces a 72-byte maximum for passwords.
+_BCRYPT_MAX_PASSWORD_BYTES = 72
 
-# Fake user store – replace with a real database in production.
-FAKE_USERS_DB: dict = {
-    "admin": {
-        "username": "admin",
-        "hashed_password": pwd_context.hash("secret"),
-        "disabled": False,
-    }
-}
+
+def _encode_password(password: str) -> bytes:
+    """Encode *password* as UTF-8 and truncate to 72 bytes for bcrypt.
+
+    Truncation is done at a character boundary so that multi-byte UTF-8
+    sequences are never split in the middle.
+    """
+    encoded = password.encode("utf-8")
+    if len(encoded) <= _BCRYPT_MAX_PASSWORD_BYTES:
+        return encoded
+    # Decode back with errors="ignore" to drop any incomplete trailing
+    # multi-byte sequence, then re-encode to get a valid 72-byte prefix.
+    return encoded[:_BCRYPT_MAX_PASSWORD_BYTES].decode("utf-8", errors="ignore").encode("utf-8")
 
 
 # ---------------------------------------------------------------------------
@@ -33,12 +39,26 @@ FAKE_USERS_DB: dict = {
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Return True if *plain_password* matches its stored hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    return bcrypt.checkpw(_encode_password(plain_password), hashed_password.encode("utf-8"))
 
 
 def get_password_hash(password: str) -> str:
     """Return the bcrypt hash of *password*."""
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(_encode_password(password), bcrypt.gensalt()).decode("utf-8")
+
+
+# Fake user store – replace with a real database in production.
+# The hash below is a pre-computed bcrypt hash of "secret" to avoid
+# paying the bcrypt cost on every application startup.
+_ADMIN_PASSWORD_HASH = "$2b$12$kmocYXIyLlFHj77nGqhjFemzaURy899kQqjneriImACBY9/wwp5Yu"
+
+FAKE_USERS_DB: dict = {
+    "admin": {
+        "username": "admin",
+        "hashed_password": _ADMIN_PASSWORD_HASH,
+        "disabled": False,
+    }
+}
 
 
 # ---------------------------------------------------------------------------
