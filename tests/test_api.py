@@ -132,14 +132,14 @@ class TestQueryEndpoint:
         assert "x-request-id" in response.headers
 
     def test_empty_query_sanitized_raises_error(self, client, auth_token):
-        # An empty or purely HTML query should be rejected
+        # A query that is purely HTML and empty after sanitization should be blocked
+        # The sanitizer raises ValueError → propagated as HTTP 500 internal error
         response = client.post(
             "/api/v1/query",
             headers={"Authorization": f"Bearer {auth_token}"},
             json={"query": "<script></script>"},
         )
-        # Either sanitizer raises ValueError (500) or blocked (400)
-        assert response.status_code in (400, 422, 500)
+        assert response.status_code == 500
 
 
 # ---------------------------------------------------------------------------

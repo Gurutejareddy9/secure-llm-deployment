@@ -129,12 +129,12 @@ class ResponseCache:
 
     @staticmethod
     def _make_key(query: str) -> str:
-        """Hash *query* into a short cache key.
+        """Hash *query* into a cache key using the full SHA-256 digest.
 
         Args:
             query: Query string to hash.
         """
-        return "cache:" + hashlib.sha256(query.strip().lower().encode()).hexdigest()[:32]
+        return "cache:" + hashlib.sha256(query.strip().lower().encode()).hexdigest()
 
     async def _get_by_key(self, key: str) -> Optional[Dict[str, Any]]:
         redis = await self._get_redis()

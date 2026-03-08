@@ -43,6 +43,10 @@ _COMPILED_PATTERNS: list[re.Pattern] = [
     re.compile(p, re.IGNORECASE | re.DOTALL) for p in _INJECTION_PATTERNS
 ]
 
+# Confidence contributed by each matched pattern.  A single definitive match
+# immediately exceeds the default 0.5 threshold, blocking the request.
+_CONFIDENCE_PER_PATTERN: float = 0.6
+
 
 @dataclass
 class GuardResult:
@@ -112,7 +116,7 @@ class PromptGuard:
 
         # Any single match is treated as a strong signal; additional matches
         # increase confidence further, capped at 1.0.
-        confidence = min(len(matched) * 0.6, 1.0)
+        confidence = min(len(matched) * _CONFIDENCE_PER_PATTERN, 1.0)
         safe = confidence < self.threshold
 
         reason = (

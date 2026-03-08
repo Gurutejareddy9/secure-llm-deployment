@@ -146,5 +146,7 @@ class ModelLoader:
         """
         try:
             pipe("warm up", max_new_tokens=1)
-        except Exception:  # noqa: BLE001
-            pass  # warm-up failure is non-fatal
+        except Exception as exc:  # noqa: BLE001
+            import logging
+
+            logging.getLogger(__name__).warning("Model warm-up failed (non-fatal): %s", exc)

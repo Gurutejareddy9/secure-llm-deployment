@@ -9,10 +9,15 @@ on:
     # Run weekly on Mondays at 08:00 UTC
     - cron: "0 8 * * 1"
 
+permissions:
+  contents: read
+
 jobs:
   bandit:
     name: Static Analysis (bandit)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -36,6 +41,8 @@ jobs:
   dependency-check:
     name: Dependency Vulnerability Scan (pip-audit)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -59,6 +66,8 @@ jobs:
   container-scan:
     name: Container Image Scan (trivy)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 

@@ -38,6 +38,10 @@ COST_TABLE: Dict[str, float] = {
 SHORT_QUERY_THRESHOLD = 80    # characters
 LONG_QUERY_THRESHOLD = 500    # characters
 
+# Token estimation constants (used for cost approximation only)
+_TOKENS_PER_WORD: int = 2       # rough estimate: ~2 LLM tokens per English word
+_AVG_RESPONSE_TOKENS: int = 200  # assumed average response length in tokens
+
 
 @dataclass
 class RoutingDecision:
@@ -115,8 +119,8 @@ class QueryRouter:
             model = self.small_model
             reason = f"Simple query (score={score:.2f}); routing to small model."
 
-        # Rough cost: assume ~2 tokens per word, average response ~200 tokens
-        approx_tokens = len(query.split()) * 2 + 200
+        # Rough cost: approx _TOKENS_PER_WORD tokens per word plus avg response length
+        approx_tokens = len(query.split()) * _TOKENS_PER_WORD + _AVG_RESPONSE_TOKENS
         cost = (approx_tokens / 1000) * COST_TABLE.get(model, 0.002)
 
         return RoutingDecision(

@@ -33,7 +33,7 @@ class BatchItem:
     priority: int
     prompt: str = field(compare=False)
     model: str = field(compare=False, default="small")
-    future: asyncio.Future = field(compare=False, default=None)  # type: ignore[assignment]
+    future: Optional[asyncio.Future] = field(compare=False, default=None)
     metadata: Dict[str, Any] = field(compare=False, default_factory=dict)
 
 

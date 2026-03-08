@@ -1,5 +1,6 @@
 """API route definitions for the LLM gateway."""
 
+import time
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -139,8 +140,6 @@ async def query_llm(
     """
     ACTIVE_REQUESTS.inc()
     REQUEST_COUNTER.labels(endpoint="/api/v1/query", status="started").inc()
-
-    import time
 
     start = time.perf_counter()
     try:
