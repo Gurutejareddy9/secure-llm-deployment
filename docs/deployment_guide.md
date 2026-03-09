@@ -40,23 +40,24 @@ Interactive docs: `http://localhost:8000/docs`
 
 ```bash
 # Build and start all services (app + redis + prometheus + grafana)
-docker-compose -f docker/docker-compose.yml up -d
+docker compose -f docker/docker-compose.yml --env-file .env up --build -d
 
 # Check status
-docker-compose -f docker/docker-compose.yml ps
+docker compose -f docker/docker-compose.yml ps
 
 # View logs
-docker-compose -f docker/docker-compose.yml logs -f app
+docker compose -f docker/docker-compose.yml logs -f app
 
 # Stop
-docker-compose -f docker/docker-compose.yml down
+docker compose -f docker/docker-compose.yml down
 ```
 
 **Service URLs:**
 | Service | URL |
 |---------|-----|
-| API | http://localhost:8000 |
+| Dashboard | http://localhost:8000 |
 | API Docs | http://localhost:8000/docs |
+| Health Check | http://localhost:8000/health |
 | Prometheus | http://localhost:9090 |
 | Grafana | http://localhost:3000 (admin / admin) |
 
