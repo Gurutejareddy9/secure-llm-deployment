@@ -1,7 +1,5 @@
 """Tests for the ResponseCache (using the in-memory fallback, no Redis required)."""
 
-import asyncio
-
 import pytest
 
 from src.cache.response_cache import ResponseCache

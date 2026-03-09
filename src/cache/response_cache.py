@@ -7,7 +7,6 @@ import os
 from typing import Any, Dict, List, Optional, Tuple
 
 from src.monitoring.logger import get_logger
-from src.monitoring.metrics import CACHE_HITS
 
 logger = get_logger(__name__)
 
