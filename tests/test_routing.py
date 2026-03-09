@@ -1,7 +1,5 @@
 """Tests for the query router."""
 
-import pytest
-
 from src.routing.query_router import QueryRouter, SMALL_MODEL, LARGE_MODEL
 
 

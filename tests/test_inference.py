@@ -1,7 +1,5 @@
 """Tests for the LLM inference engine and batch processor."""
 
-import asyncio
-
 import pytest
 
 from src.inference.engine import LLMEngine, MockEngine, MODEL_COST_TABLE
